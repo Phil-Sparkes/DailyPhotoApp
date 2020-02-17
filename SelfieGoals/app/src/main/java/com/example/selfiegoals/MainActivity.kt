@@ -88,9 +88,8 @@ class MainActivity : AppCompatActivity() {
         // adding the checkbox to the constraint layout
         constraintLayout.addView(newCheckBox)
 
-        // assigning a context menu to the checkbox. context menu is when you hold click and more options appear
-        var newCheckBoxContextMenu = registerForContextMenu(newCheckBox)
-        //newCheckBoxContextMenu = ContextMenu.
+        // creating a context menu for the checkbox (context menu is when you hold click and more options appear)
+        registerForContextMenu(newCheckBox)
 
         // on click for the checkbox open the camera intent
         newCheckBox.setOnClickListener {
@@ -103,31 +102,68 @@ class MainActivity : AppCompatActivity() {
     override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
         super.onCreateContextMenu(menu, v, menuInfo)
         val checkbox = v as CheckBox
-        checkbox.text.toString()
+
+        val checkboxText = checkbox.text.toString()
+
+        val db = GoalDB(this)
+        val goals = db.selectAllGoal()
+
+        var gid = 0
+
+        // gets gid from gname, probably better to add function to GoalDB for this
+        for (goal in goals) {
+            if (goal.gname == checkboxText) {
+                gid = goal.gid!!
+            }
+        }
+        db.close()
+
+        // give context menu header
         menu!!.setHeaderTitle(checkbox.text.toString())
-        menu.add(0, v!!.id, 0, "Call")
-        menu.add(0, v.id, 1, "SMS")
-        menu.add(0, v.id, 2, "Email")
-        menu.add(0, v.id, 3, "WhatsApp")
-        //getMenuInflater().inflate(R.menu.checkbox_menu, menu)
+
+        // give context menu buttons with group id matching gid
+        menu.add(gid, v.id, 0, "Take Picture")
+        menu.add(gid, v.id, 1, "Delete")
+        menu.add(gid, v.id, 2, "View in Gallery")
     }
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
-        when(item.itemId) {
-            R.id.option_1 -> {Toast.makeText(this, item.menuInfo.toString(), Toast.LENGTH_SHORT).show()
-
+        // loop through context menu items to see which was clicked
+        when (item.title) {
+            "Take Picture" -> { startCameraIntentFromGid(item.groupId)
                 return true }
-            R.id.option_2 -> {Toast.makeText(this, "option 2 selected", Toast.LENGTH_SHORT).show()
+            "Delete" -> { deleteFromDB(item.groupId)
                 return true }
-            R.id.option_3 -> {Toast.makeText(this, "option 3 selected", Toast.LENGTH_SHORT).show()
+            "View in Gallery" -> { Toast.makeText(this, "ToDo", Toast.LENGTH_SHORT).show()
                 return true }
-            else -> return super.onContextItemSelected(item)
         }
+        return true
     }
-    fun deleteFromDB(gid: Int) {
+    private fun deleteFromDB(gid: Int) {
         val db = GoalDB(this)
+        // delete goal
         db.deleteGoalWith(gid)
         db.close()
+        // restart activity to refresh page
+        startActivity(Intent(this, MainActivity::class.java))
+
+        // ToDo: add option to delete photo data alongside goal
+    }
+
+    private fun startCameraIntentFromGid(gid: Int) {
+        val db = GoalDB(this)
+        val goals = db.selectAllGoal()
+        var gName = ""
+        // gets the gname from gid, probably better to add a function into GoalDB for this
+        for (goal in goals) {
+            if (goal.gid == gid) {
+                gName = goal.gname.toString()
+            }
+        }
+        db.close()
+        val intentCamera = Intent(this, CustomCamera::class.java)
+        intent = intentCamera.apply { putExtra(EXTRA_MESSAGE, gName)}
+        startActivity(intent)
     }
 
 }
