@@ -55,8 +55,8 @@ class GoalDB(context : Context) :
     }
 
     fun checkIfInDB(gid: Int): Boolean {
-        var query = ("SELECT * FROM goal WHERE gid = $gid")
-        var cursor = readableDatabase.rawQuery(query, null, null )
+        val query = ("SELECT * FROM goal WHERE gid = $gid")
+        val cursor = readableDatabase.rawQuery(query, null, null )
         if (cursor.count <=0) {
             cursor.close()
             return false
@@ -64,6 +64,28 @@ class GoalDB(context : Context) :
         cursor.close()
         return true
     }
+    fun getNameFromID(gid: Int): String {
+        var query = ("SELECT * FROM goal WHERE gid = $gid")
+        val cursor = readableDatabase.rawQuery(query, null, null )
+        var gname = ""
+        if (cursor.moveToFirst()) {
+            gname = cursor.getString(cursor.getColumnIndex("gname"))
+        }
+        cursor.close()
+        return gname
+    }
+
+    fun getIDFromName(gname: String): Int {
+        var query = ("SELECT * FROM goal WHERE gname = $gname")
+        val cursor = readableDatabase.rawQuery(query, null, null )
+        var gid = 0
+        if (cursor.moveToFirst()) {
+            gid = cursor.getInt(cursor.getColumnIndex("gid"))
+        }
+        cursor.close()
+        return gid
+    }
+
 
 
     fun selectAllGoal(): ArrayList<GoalModel> {

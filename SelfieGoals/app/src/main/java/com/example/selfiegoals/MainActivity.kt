@@ -106,16 +106,8 @@ class MainActivity : AppCompatActivity() {
         val checkboxText = checkbox.text.toString()
 
         val db = GoalDB(this)
-        val goals = db.selectAllGoal()
+        val gid = db.getIDFromName(checkboxText)
 
-        var gid = 0
-
-        // gets gid from gname, probably better to add function to GoalDB for this
-        for (goal in goals) {
-            if (goal.gname == checkboxText) {
-                gid = goal.gid!!
-            }
-        }
         db.close()
 
         // give context menu header
@@ -152,19 +144,13 @@ class MainActivity : AppCompatActivity() {
 
     private fun startCameraIntentFromGid(gid: Int) {
         val db = GoalDB(this)
-        val goals = db.selectAllGoal()
-        var gName = ""
-        // gets the gname from gid, probably better to add a function into GoalDB for this
-        for (goal in goals) {
-            if (goal.gid == gid) {
-                gName = goal.gname.toString()
-            }
-        }
+        val gname = db.getNameFromID(gid)
         db.close()
+
         val intentCamera = Intent(this, CustomCamera::class.java)
-        intent = intentCamera.apply { putExtra(EXTRA_MESSAGE, gName)}
+        intent = intentCamera.apply { putExtra(EXTRA_MESSAGE, gname)}
         startActivity(intent)
-    }
+}
 
 }
 
