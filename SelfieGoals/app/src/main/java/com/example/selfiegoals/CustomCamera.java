@@ -6,12 +6,17 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.hardware.Camera;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.os.Bundle;
+import android.widget.RelativeLayout;
+
+import java.io.File;
 
 import static android.provider.AlarmClock.EXTRA_MESSAGE;
 
@@ -22,9 +27,12 @@ public class CustomCamera extends AppCompatActivity {
     private Camera mCamera;
     private CameraPreview mPreview;
     private Camera.PictureCallback mPicture;
-    private Button capture, switchCamera;
+    private Button capture, switchCamera, overlay;
     private Context myContext;
     private LinearLayout cameraPreview;
+    private RelativeLayout mainLayout;
+    private ImageView overlayImage;
+    private boolean visible = true;
     private boolean cameraFront = false;
     public static Bitmap bitmap;
 
@@ -37,9 +45,16 @@ public class CustomCamera extends AppCompatActivity {
         myContext = this;
 
         mCamera =  Camera.open();
+        mainLayout = (RelativeLayout) findViewById(R.id.mainLayout);
         cameraPreview = (LinearLayout) findViewById(R.id.cPreview);
         mPreview = new CameraPreview(myContext, mCamera);
+        overlayImage = new ImageView(myContext);
+
+        mainLayout.addView(overlayImage);
         cameraPreview.addView(mPreview);
+        setUpOverlay(overlayImage);
+
+        overlayImage.setLayoutParams(cameraPreview.getLayoutParams());
 
         initializeCamera();
 
@@ -48,6 +63,15 @@ public class CustomCamera extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 mCamera.takePicture(null, null, mPicture);
+            }
+        });
+
+        overlay = (Button) findViewById(R.id.btnOverlay);
+
+        overlay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               visible = handleOverlay(overlayImage, visible);
             }
         });
 
@@ -194,4 +218,29 @@ public class CustomCamera extends AppCompatActivity {
         };
         return picture;
     }
+
+    private void setUpOverlay(ImageView imageview) {
+        String path = Environment.getExternalStorageDirectory().toString();
+        GoalDB db = new GoalDB(this);
+        String gname = getIntent().getStringExtra(EXTRA_MESSAGE);
+        String gdate = db.getDateFromName(gname);
+
+        File file = new File(path,  gname + "-" + gdate + ".jpg");
+        Bitmap oldBitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+
+        imageview.setImageBitmap(oldBitmap);
+        Float alphaValue = new Float (0);
+        imageview.setAlpha(alphaValue);
+        imageview.setBackgroundColor(0);
+    }
+
+    private boolean handleOverlay(ImageView imageview, boolean visible) {
+        Float alphaValue = new Float(0);
+        if (visible) {
+            alphaValue = new Float(0.3);
+        }
+        imageview.setAlpha(alphaValue);
+        return (!visible);
+    }
+
 }
