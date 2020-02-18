@@ -5,8 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.os.Environment
-import android.provider.AlarmClock
-import android.util.Log
+import android.provider.AlarmClock.EXTRA_MESSAGE
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -94,7 +93,7 @@ class GalleryActivity : AppCompatActivity() {
 
         newHorizontalLayout.setOnClickListener{
             val intentGoalGalleryActivity = Intent(this, GalleryGoalActivity::class.java)
-            intent = intentGoalGalleryActivity.apply { putExtra(AlarmClock.EXTRA_MESSAGE, currentGoal)}
+            intent = intentGoalGalleryActivity.apply { putExtra(EXTRA_MESSAGE, currentGoal)}
             startActivity(intent)
         }
     }
