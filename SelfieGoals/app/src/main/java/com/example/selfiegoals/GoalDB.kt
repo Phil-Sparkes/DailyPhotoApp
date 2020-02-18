@@ -5,7 +5,6 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 
-
 class GoalDB(context : Context) :
     SQLiteOpenHelper(context, "goaldb.db", null, DB_VERSION) {
 
@@ -76,7 +75,7 @@ class GoalDB(context : Context) :
     }
 
     fun getIDFromName(gname: String): Int {
-        var query = ("SELECT * FROM goal WHERE gname = $gname")
+        var query = ("SELECT * FROM goal WHERE gname = '$gname'")
         val cursor = readableDatabase.rawQuery(query, null, null )
         var gid = 0
         if (cursor.moveToFirst()) {
@@ -84,6 +83,17 @@ class GoalDB(context : Context) :
         }
         cursor.close()
         return gid
+    }
+
+    fun getDateFromName(gname: String): String {
+        var query = ("SELECT * FROM goal WHERE gname = '$gname'")
+        val cursor = readableDatabase.rawQuery(query, null, null )
+        var gdate = ""
+        if (cursor.moveToFirst()) {
+            gdate = cursor.getString(cursor.getColumnIndex("gdate"))
+        }
+        cursor.close()
+        return gdate
     }
 
 

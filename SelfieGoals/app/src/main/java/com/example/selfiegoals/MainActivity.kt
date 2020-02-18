@@ -106,16 +106,7 @@ class MainActivity : AppCompatActivity() {
         val checkboxText = checkbox.text.toString()
 
         val db = GoalDB(this)
-        val goals = db.selectAllGoal()
-        var gid = 0
-
-        for (goal in goals) {
-            if (goal.gname == checkboxText) {
-                gid = goal.gid!!
-            }
-        }
-
-        //val gid = db.getIDFromName(checkboxText)
+        val gid = db.getIDFromName(checkboxText)
 
         db.close()
 
@@ -153,15 +144,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun startCameraIntentFromGid(gid: Int) {
         val db = GoalDB(this)
-        val goals = db.selectAllGoal()
-        var gname = ""
 
-        for (goal in goals) {
-            if (goal.gid == gid) {
-                gname = goal.gname.toString()
-            }
-        }
-        //val gname = db.getNameFromID(gid)
+        val gname = db.getNameFromID(gid)
 
         db.close()
 
