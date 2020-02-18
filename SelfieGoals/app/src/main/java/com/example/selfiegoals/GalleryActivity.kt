@@ -1,9 +1,11 @@
 package com.example.selfiegoals
 
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.os.Environment
+import android.provider.AlarmClock
 import android.util.Log
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.*
@@ -25,7 +27,6 @@ class GalleryActivity : AppCompatActivity() {
         val goals = db.selectAllGoal()
 
         for (goal in goals) {
-            Log.e("GalleryActivity", "gid ${goal.gid} gname ${goal.gname} gdate ${goal.gdate}")
             // for each goal make a horizontal layout
             makeHorizontalLayout(goal.gname!!, verticalLayout)
         }
@@ -89,6 +90,12 @@ class GalleryActivity : AppCompatActivity() {
         var imageBitmaps = loadImages(currentGoal)
         for (imageBitmap in imageBitmaps) {
             makeImageView(imageBitmap,newHorizontalLayout)
+        }
+
+        newHorizontalLayout.setOnClickListener{
+            val intentGoalGalleryActivity = Intent(this, GalleryGoalActivity::class.java)
+            intent = intentGoalGalleryActivity.apply { putExtra(AlarmClock.EXTRA_MESSAGE, currentGoal)}
+            startActivity(intent)
         }
     }
 }

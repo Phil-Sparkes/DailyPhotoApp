@@ -4,6 +4,7 @@ import android.Manifest
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.content.Intent
+import android.provider.AlarmClock
 import android.provider.AlarmClock.EXTRA_MESSAGE
 import android.util.Log
 import android.util.TypedValue
@@ -126,7 +127,7 @@ class MainActivity : AppCompatActivity() {
                 return true }
             "Delete" -> { deleteFromDB(item.groupId)
                 return true }
-            "View in Gallery" -> { Toast.makeText(this, "ToDo", Toast.LENGTH_SHORT).show()
+            "View in Gallery" -> { viewInGallery(item.groupId)
                 return true }
         }
         return true
@@ -144,15 +145,23 @@ class MainActivity : AppCompatActivity() {
 
     private fun startCameraIntentFromGid(gid: Int) {
         val db = GoalDB(this)
-
         val gname = db.getNameFromID(gid)
-
         db.close()
 
         val intentCamera = Intent(this, CustomCamera::class.java)
         intent = intentCamera.apply { putExtra(EXTRA_MESSAGE, gname)}
         startActivity(intent)
-}
+    }
+
+    private fun viewInGallery(gid: Int) {
+        val db = GoalDB(this)
+        val gname = db.getNameFromID(gid)
+        db.close()
+
+        val intentGoalGalleryActivity = Intent(this, GalleryGoalActivity::class.java)
+        intent = intentGoalGalleryActivity.apply { putExtra(EXTRA_MESSAGE, gname)}
+        startActivity(intent)
+    }
 
 }
 

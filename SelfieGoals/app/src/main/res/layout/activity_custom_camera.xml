@@ -13,12 +13,6 @@
         android:orientation="horizontal"
         android:id="@+id/cPreview">
 
-<!--        <ImageView-->
-<!--            android:id="@+id/imageOverlay"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent"-->
-<!--            android:alpha="0.3"-->
-<!--            android:background="#00000000" />-->
 
     </LinearLayout>
     <LinearLayout
