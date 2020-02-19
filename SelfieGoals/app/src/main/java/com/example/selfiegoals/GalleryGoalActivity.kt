@@ -6,11 +6,11 @@ import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
-import android.provider.AlarmClock
+import android.provider.AlarmClock.EXTRA_MESSAGE
 import android.view.ContextMenu
 import android.view.MenuItem
 import android.view.View
-import android.widget.CheckBox
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import java.io.File
@@ -22,14 +22,21 @@ class GalleryGoalActivity : AppCompatActivity() {
         setContentView(R.layout.activity_gallery_goal)
 
         val imageLayout = findViewById<LinearLayout>(R.id.imageLayout)
+        val stopMotionBtn = findViewById<Button>(R.id.btn_stopMotion)
+        val currentGoal = intent.getStringExtra(EXTRA_MESSAGE)
 
-        val imageFiles = loadImageFiles()
+        val imageFiles = loadImageFiles(currentGoal)
         var imageID = 0
 
         for (imageFile in imageFiles){
             imageBitmap = (BitmapFactory.decodeFile(imageFile.getAbsolutePath()))
             makeImageView(imageBitmap, imageLayout, imageID)
             imageID += 1
+        }
+        stopMotionBtn.setOnClickListener {
+            val intentStopMotionActivity = Intent(this, StopMotionActivity::class.java)
+            intent = intentStopMotionActivity.apply { putExtra(EXTRA_MESSAGE, currentGoal)}
+            startActivity(intent)
         }
     }
 
@@ -50,8 +57,7 @@ class GalleryGoalActivity : AppCompatActivity() {
         registerForContextMenu(newImageView)
     }
 
-    private fun loadImageFiles(): MutableList<File> {
-        val currentGoal = intent.getStringExtra(AlarmClock.EXTRA_MESSAGE)
+    private fun loadImageFiles(currentGoal: String): MutableList<File> {
         // get path to the storage directory
         val path = Environment.getExternalStorageDirectory()
         // create an array of all the files in the directory
@@ -89,13 +95,14 @@ class GalleryGoalActivity : AppCompatActivity() {
         return true
     }
     private fun deleteImageFile(FileID: Int) {
-        val imageFiles = loadImageFiles()
+        val currentGoal = intent.getStringExtra(EXTRA_MESSAGE)
+        val imageFiles = loadImageFiles(currentGoal)
         val fileToDelete = imageFiles[FileID]
 
         fileToDelete.delete()
         val intentGoalGalleryActivity = Intent(this, GalleryGoalActivity::class.java)
 
-        intent = intentGoalGalleryActivity.apply { putExtra(AlarmClock.EXTRA_MESSAGE, intent.getStringExtra(AlarmClock.EXTRA_MESSAGE))}
+        intent = intentGoalGalleryActivity.apply { putExtra(EXTRA_MESSAGE, intent.getStringExtra(EXTRA_MESSAGE))}
         startActivity(intent)
 
     }

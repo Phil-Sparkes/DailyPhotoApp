@@ -4,7 +4,6 @@ import android.Manifest
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.content.Intent
-import android.provider.AlarmClock
 import android.provider.AlarmClock.EXTRA_MESSAGE
 import android.util.Log
 import android.util.TypedValue

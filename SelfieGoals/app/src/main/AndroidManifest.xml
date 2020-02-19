@@ -16,7 +16,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".GalleryGoalActivity"></activity>
+        <activity android:name=".StopMotionActivity"></activity>
+        <activity android:name=".GalleryGoalActivity" />
         <activity android:name=".CustomCamera" />
         <activity android:name=".PictureActivity" />
         <activity android:name=".CalendarActivity" />
